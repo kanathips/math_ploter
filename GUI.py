@@ -4,6 +4,9 @@ matplotlib.use('TkAgg')
 #import tkColorChooser use to set color of graph
 import tkColorChooser
 
+#import tkFileDialog to save graph
+import tkFileDialog
+
 #import arange from numpy to create x values (float)
 from numpy import arange
 
@@ -29,7 +32,7 @@ class Ploter(object):
     def ploter_frame(self):
    
         frame = Tk.Frame(self.main_win, width=500, height=500) #frame for ploter
-        self.figure = Figure(figsize=(3,3), dpi=100)# set height and weight of Figure
+        self.figure = Figure(figsize=(5, 5), dpi=100)# set height and weight of Figure
 
         ploter = self.figure.add_subplot(111) 
         ploter.grid(self.grid_status) #Part for enable or disable grid of ploter
@@ -38,7 +41,7 @@ class Ploter(object):
         self.canvas.show() #
         self.canvas.get_tk_widget().pack(fill=Tk.BOTH, expand=1) #pack canvas to frame
 
-        frame.pack(side = Tk.LEFT) #pack frame to root window
+        frame.grid(row = 0 , column = 0,rowspan = 3, sticky=Tk.W) #pack frame to root window
 
 #Main window
 class Main_win(object): #GUI class    
@@ -46,14 +49,14 @@ class Main_win(object): #GUI class
     def __init__(self):
         self.main_win = Tk.Tk()
         self.main_win.wm_title('Math Ploter') #Set titel of main window
-
-
-
+        self.main_win.columnconfigure(1, weight=300)
+        
 #Equation box section
 class Equation(object):
 
-    def __init__(self, main_win, ploter):
+    def __init__(self, main_win, ploter, rounds):
         self.fig = ploter.figure
+        self.rounds = rounds
         self.line_color = '#000000'
         self.main_win = main_win.main_win
         self.equation_frame()
@@ -65,18 +68,32 @@ class Equation(object):
 
     
     def equation_frame(self):
-        frame = Tk.Frame(self.main_win,pady = 20, padx = 20)
+        frame = Tk.Frame(self.main_win,padx = 20 , pady = 20)
         
         entry = Tk.Entry(frame)
-        entry.pack()
+        entry.grid(row = 0 , column = 0,columnspan=2)
 
-        style_change = Tk.Button(frame, text = 'Style')
-        style_change.pack(side = Tk.RIGHT)
+        style_change = Tk.Button(frame, text = 'Style', command = self.styleChooser)
+        style_change.grid(row = 1, column = 1)
 
         self.color_change = Tk.Button(frame, text= 'Color',command = self.colorChooser)
-        self.color_change.pack(side = Tk.LEFT)
+        self.color_change.grid(row = 1, column = 0)
 
-        frame.pack()
+        frame.grid(column = 1,row = self.rounds, sticky=Tk.NE)
+
+    def styleChooser(self):
+        window = Tk.Toplevel()
+        window.title('Style Chooser')
+
+        figure = Figure(figsize=(3, 3), dpi=100)# set height and weight of Figure
+
+        ploter = figure.add_subplot(111) 
+        ploter.grid(True) #Part for enable or disable grid of ploter
+
+        canvas = FigureCanvasTkAgg(figure, master=window)
+        canvas.show() #
+        
+        canvas.get_tk_widget().pack(fill=Tk.BOTH, expand=1) #pack canvas to frame
 
 #Menu bar
 class Menu(object):
@@ -94,7 +111,7 @@ class Menu(object):
         menubar = Tk.Menu(self.main_win)
         # create a pulldown menu, and add it to the menu bar
         filemenu = Tk.Menu(menubar, tearoff=0)
-        filemenu.add_command(label="Save", command = self.fig.savefig('save'))
+        filemenu.add_command(label="Save", command = self.file_save)
         filemenu.add_separator()
         filemenu.add_command(label="Exit", command = self.main_exit)
         menubar.add_cascade(label="File", menu=filemenu)
@@ -110,26 +127,20 @@ class Menu(object):
         # display the menu
         self.main_win.config(menu=menubar)
 
-#tool bar class for control ploter 
-class Tool_bar(object):
-
-    def __init__(self, main_win, ploter):
-        self.main_win = main_win.main_win
-        self.canvas = ploter.canvas
-        
-        toolbar = NavigationToolbar2TkAgg(self.canvas, self.main_win)
-        toolbar.update()
-       
+    def file_save(self):
+        f = tkFileDialog.asksaveasfile(mode='w', defaultextension=".png")
+        if f is None: # asksaveasfile return `None` if dialog closed with "cancel".
+            return
+        self.fig.savefig(f.name)
+        f.close()
 
 def main():
     main = Main_win()
     ploter = Ploter(main)
     Menu(main, ploter)
-    Tool_bar(main, ploter)
-    for _ in xrange(3):
-        Equation(main, ploter)
-    Tk.Button(text='Start Plot').pack()
-    
+    for i in xrange(3):
+        Equation(main, ploter, i)  
+    Tk.Button(text='Start Plot').grid(column = 1,row = 4)
     Tk.mainloop()
 
 main()
