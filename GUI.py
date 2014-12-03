@@ -43,7 +43,7 @@ class Ploter(object):
 
         self.canvas = FigureCanvasTkAgg(self.figure, master = frame)
         self.canvas.show() 
-         #pack canvas to frame
+        #pack canvas to frame
         
         self.canvas.get_tk_widget().pack(fill = Tk.BOTH, expand = 1)
         #pack frame to root window
@@ -237,6 +237,7 @@ class Menu(object):
         self.main_win.config(menu = menubar)
 
     def file_save(self):
+        '''set unit's picture'''
         save = tkFileDialog.asksaveasfile(mode = 'w', defaultextension = ".png")
         if save is None: # asksaveasfile return `None` if dialog closed with "cancel".
             return
