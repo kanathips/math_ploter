@@ -1,5 +1,4 @@
 ''''Math Ploter'''
-
 import matplotlib
 matplotlib.use('TkAgg')
 
@@ -10,7 +9,6 @@ import tkColorChooser
 
 #import tkFileDialog to save graph
 import tkFileDialog
-
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 #import Figure from matplotlib to be space for ploter 
@@ -23,6 +21,7 @@ if sys.version_info[0] < 3:
     import Tkinter as Tk
 else:
     import tkinter as Tk
+<<<<<<< HEAD
 
 import re #Module to match equation 
 
@@ -44,6 +43,18 @@ class Main_win(object):
         self.ploter_frame() #call create ploter_frame function
         
     #Ploter_frame function
+=======
+
+#Ploter section
+class Ploter(object):
+    '''Class to create Ploter section'''
+    def __init__(self, main_win):
+        '''Main variable of this class'''
+        self.main_win = main_win.main_win
+        self.grid_status = True #status of grid for ploter
+        self.ploter_frame()
+
+>>>>>>> 52e528a9d951062e793dc79f25aad10603ed0b9e
     def ploter_frame(self):
         '''function to create ploter section'''
         #frame for ploter
@@ -51,20 +62,29 @@ class Main_win(object):
 
         # set height and weight of Figure
         self.figure = Figure(figsize = (5, 5), dpi = 100)
-        self.ploter = self.figure.add_subplot(111) 
 
+        self.ploter = self.figure.add_subplot(111) 
+<<<<<<< HEAD
+
+=======
+>>>>>>> 52e528a9d951062e793dc79f25aad10603ed0b9e
         #Part for enable or disable grid of ploter
-        self.ploter.grid() 
+        self.ploter.grid(self.grid_status) 
 
         self.canvas = FigureCanvasTkAgg(self.figure, master = frame)
         self.canvas.show() 
-        
         #pack canvas to frame
+<<<<<<< HEAD
         self.canvas.get_tk_widget().pack(fill = Tk.BOTH, expand = 1)
 
+=======
+        
+        self.canvas.get_tk_widget().pack(fill = Tk.BOTH, expand = 1)
+>>>>>>> 52e528a9d951062e793dc79f25aad10603ed0b9e
         #pack frame to root window
-        frame.grid(row = 0, column = 0, rowspan = 5, columnspan = 3, sticky = Tk.W) 
+        frame.grid(row = 0, column = 0, rowspan = 3, sticky = Tk.W) 
 
+<<<<<<< HEAD
     #Equation_frame function
     def equation_frame(self, option):
         '''function to create eqution section'''
@@ -136,11 +156,98 @@ class Option(object):
         self.maxi_value = 10 #defaul maximum x value
         self.mini_value = 0 #defaul minimum x value
         self.step_value = 0.1 #defaul step
+=======
+#Main window
+class Main_win(object): #GUI class    
+    '''Class to create main window '''
+    def __init__(self):
+        '''Main variable of this class'''
+        self.main_win = Tk.Tk()
+        self.main_win.resizable(0, 0) #config to fix size of main window
+        self.main_win.wm_title('Math Ploter') #Set titel of main window
+
+#Equation box section
+class Equation(object):
+    '''Class to create equation section'''
+    def __init__(self, main_win, ploter, rounds):
+        '''Main variable of this class'''
+        self.fig = ploter.figure
+        self.ploter_frame = ploter.ploter_frame
+        self.rounds = rounds
+        self.line_color = '#000000'
+        self.main_win = main_win.main_win
+        self.equation_frame()
+        
+    #color dialog for graph 
+    def color_chooser(self): #function to choose color of graph
+        '''function to create color chooser window'''
+        (rgb, self.line_color) = tkColorChooser.askcolor()
+        self.color_change.config(fg = self.line_color)
+
+    def equation_frame(self):
+        '''function to create equation box colorChooser botton and stylechooser botton'''
+        frame = Tk.Frame(self.main_win, padx = 20, pady = 20)
+        
+        entry = Tk.Entry(frame)
+        entry.grid(row = 0, column = 0, columnspan = 2)
+
+        style_change = Tk.Button(frame, text = 'Style', command = self.style_chooser)
+        style_change.grid(row = 1, column = 1)
+
+        self.color_change = Tk.Button(frame, text= 'Color', command = self.color_chooser)
+        self.color_change.grid(row = 1, column = 0)
+
+        frame.grid(column = 1, row = self.rounds, sticky=Tk.NE)
+
+    def style_chooser(self):
+        '''function to create Style chooser window'''
+        window = Tk.Toplevel()
+        window.resizable(0, 0)
+        window.title('Style Chooser')
+
+        figure = Figure(figsize=(3, 3), dpi=100)# set height and weight of Figure
+
+        ploter = figure.add_subplot(111) 
+        
+        canvas = FigureCanvasTkAgg(figure, master=window)
+        canvas.show() #
+        
+        canvas.get_tk_widget().grid(columnspan = 3) #pack canvas to frame
+        ploter.plot([0, 0], [0, 1], '-', color = self.line_color)
+        ploter.plot([1, 1], [0, 1], '--', color = self.line_color)
+        ploter.plot([2, 2, 2], [0, 0.5, 1], 'ro', color = self.line_color)
+        ploter.axis([-1, 3, -0.5, 1.5])
+        ploter.axes.get_xaxis().set_ticks([])
+        ploter.axes.get_yaxis().set_ticks([])
+        for i in range(1, 4):
+            Tk.Button(window, text = 'Style %d' % i).grid(column = i - 1, row = 1)
+
+class Option(object):
+    def __init__(self, ploter):
+        '''set all valuse in graph'''
+        self.press = None
+        self.cur_x_limit = None
+        self.cur_y_limit = None
+        self.x0 = None
+        self.y0 = None
+        self.x1 = None
+        self.y1 = None
+        self.xpress = None
+        self.ypress = None
+        self.ploter = ploter.ploter
+
+        self.zoom_option()
+        self.pan_option()
+>>>>>>> 52e528a9d951062e793dc79f25aad10603ed0b9e
 
     def zoom_option(self, base_scale = 1.1):
         '''This function use to zoom ploter_frame'''
         def zoom(event):
+<<<<<<< HEAD
             '''zoom'''
+=======
+            '''set veluse of size of graph''' 
+>>>>>>> 52e528a9d951062e793dc79f25aad10603ed0b9e
             cur_x_limit = self.ploter.get_xlim()
             cur_y_limit = self.ploter.get_ylim()
 
@@ -212,6 +319,7 @@ class Option(object):
         #return the function
         return move
 
+<<<<<<< HEAD
     def file_save(self):
         '''This function use to save graph'''
         save = tkFileDialog.asksaveasfile(mode = 'w', defaultextension = ".png")
@@ -412,19 +520,30 @@ class Option(object):
             
 
 
+=======
+>>>>>>> 52e528a9d951062e793dc79f25aad10603ed0b9e
 #Menu bar
 class Menu(object):
-    def __init__(self, main_win, option):
+    def __init__(self, main_win, ploter):
         self.main_win = main_win.main_win
-        self.option = option
+        self.fig = ploter.figure
         self.menu_bar()
+
+    def main_exit(self):
+        self.main_win.quit()
+        self.main_win.destroy()
     
     def menu_bar(self):
-        menubar = Tk.Menu(self.main_win)
+        '''create menu bar
+        1.buttom "Save" -> this buttom wil save picture of graph
+        2.buttom "Exit" -> thi buttom will exit this program
+        3.buttom "Flie" -> 
+        '''menubar = Tk.Menu(self.main_win)
         # create a pulldown menu, and add it to the menu bar
-        filemenu = Tk.Menu(menubar, tearoff=0)
-        filemenu.add_command(label="Save", command = self.option.file_save)
+        filemenu = Tk.Menu(menubar, tearoff = 0)
+        filemenu.add_command(label = "Save", command = self.file_save)
         filemenu.add_separator()
+<<<<<<< HEAD
         filemenu.add_command(label="Exit", command = lambda : self.option.window_exit(self.main_win))
         menubar.add_cascade(label="File", menu=filemenu)
 
@@ -435,6 +554,14 @@ class Menu(object):
         editmenu.add_command(label="X value", command = self.option.xvalue)
         editmenu.add_command(label="Ploter", command = self.option.set_ploter)
         menubar.add_cascade(label="Edit", menu=editmenu)
+=======
+        filemenu.add_command(label = "Exit", command = self.main_exit)
+        menubar.add_cascade(label = "File", menu = filemenu)
+
+        # create more pulldown menus
+        editmenu = Tk.Menu(menubar, tearoff=0)
+        menubar.add_cascade(label = "Edit", menu = editmenu)
+>>>>>>> 52e528a9d951062e793dc79f25aad10603ed0b9e
 
         helpmenu = Tk.Menu(menubar, tearoff=0)
         helpmenu.add_command(label = "About")
@@ -443,11 +570,32 @@ class Menu(object):
         # display the menu
         self.main_win.config(menu = menubar)
 
+    def file_save(self):
+        '''set unit's picture'''
+        save = tkFileDialog.asksaveasfile(mode = 'w', defaultextension = ".png")
+        if save is None: # asksaveasfile return `None` if dialog closed with "cancel".
+            return
+        self.fig.savefig(save.name)
+        save.close()
+
 def main():
+    import numpy as np
     main = Main_win()
+<<<<<<< HEAD
     option = Option(main)
     main.equation_frame(option)
     Menu(main, option)
+=======
+    ploter = Ploter(main)
+    Option(ploter)
+    Menu(main, ploter)
+    for i in xrange(3):
+        Equation(main, ploter, i)  
+    Tk.Button(text =' Start Plot').grid(column = 1 ,row = 4)
+    t = np.arange(0., 20., 1)
+    x = t ** 2
+    ploter.ploter.plot(t, x, 'ro')
+>>>>>>> 52e528a9d951062e793dc79f25aad10603ed0b9e
     Tk.mainloop()
 
 main()
