@@ -1,21 +1,14 @@
 ''''Math Ploter'''
-
 import matplotlib
 matplotlib.use('TkAgg')
-
 import tkMessageBox
-
 #import tkColorChooser use to set color of graph
 import tkColorChooser
-
 #import tkFileDialog to save graph
 import tkFileDialog
-
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-
 #import Figure from matplotlib to be space for ploter 
 from matplotlib.figure import Figure
-
 # import sys to chcek version of python
 # becaues Tkinter in python 3+ and 3-  have differance name
 import sys
@@ -23,13 +16,11 @@ if sys.version_info[0] < 3:
     import Tkinter as Tk
 else:
     import tkinter as Tk
-
+import webbrowser
 import re #Module to match equation 
-
 from sympy import sympify #Import commad for solve eqaultion
 from sympy.mpmath import *
 from pylab import arange  #Import command for generate x value
-    
 
 #Main window
 class Main_win(object): 
@@ -38,9 +29,7 @@ class Main_win(object):
         '''Main variable of this class'''
         self.main_win = Tk.Tk()#create main window
         self.main_win.resizable(0, 0) #config to fix size of main window
-        self.main_win.wm_title('Math Ploter') #Set titel of main window
-        
-        
+        self.main_win.wm_title('Math Ploter') #Set titel of main window      
         self.ploter_frame() #call create ploter_frame function
         
     #Ploter_frame function
@@ -48,20 +37,15 @@ class Main_win(object):
         '''function to create ploter section'''
         #frame for ploter
         frame = Tk.Frame(self.main_win, width = 500, height = 500) 
-
         # set height and weight of Figure
         self.figure = Figure(figsize = (5, 5), dpi = 100)
         self.ploter = self.figure.add_subplot(111) 
-
         #Part for enable or disable grid of ploter
         self.ploter.grid() 
-
         self.canvas = FigureCanvasTkAgg(self.figure, master = frame)
-        self.canvas.show() 
-        
+        self.canvas.show()     
         #pack canvas to frame
         self.canvas.get_tk_widget().pack(fill = Tk.BOTH, expand = 1)
-
         #pack frame to root window
         frame.grid(row = 0, column = 0, rowspan = 5, columnspan = 3, sticky = Tk.W) 
 
@@ -70,8 +54,7 @@ class Main_win(object):
         '''function to create eqution section'''
         #frame for equation
         frame = Tk.Frame(self.main_win, width = 200, height  = 200, padx = 20, pady = 20) #create and config frame
-        frame.grid(row = 0, column = 4, rowspan = 4) #locate frame
-        
+        frame.grid(row = 0, column = 4, rowspan = 4) #locate frame   
         Tk.Label(frame, text = 'Equation 1').grid(columnspan = 2) #create and locate label of equation 1
         Tk.Label(frame, text = 'f(x) = ').grid(row = 1, column = 0, sticky = Tk.E) 
         self.equation_1 = Tk.Entry(frame)#create entry for equation 1
@@ -79,7 +62,6 @@ class Main_win(object):
         Tk.Label(frame, text = 'Label = ').grid(row = 2, column = 0, sticky = Tk.E)
         self.label_1 = Tk.Entry(frame)#create entry for label equation 1
         self.label_1.grid(row = 2, column = 1) #locate label_1
-        
         Tk.Label(frame, text = 'Equation 2').grid(row = 4,columnspan = 2) #create and locate label of equation 2
         Tk.Label(frame, text = 'f(x) = ').grid(row = 5, column = 0, sticky = Tk.E) 
         self.equation_2 = Tk.Entry(frame)#create entry for equation 2
@@ -87,7 +69,6 @@ class Main_win(object):
         Tk.Label(frame, text = 'Label = ').grid(row = 6, column = 0, sticky = Tk.E)
         self.label_2 = Tk.Entry(frame)#create entry for label equation 2
         self.label_2.grid(row = 6, column = 1) #locate label_2
-        
         Tk.Label(frame, text = 'Equation 3').grid(row = 8,columnspan = 2) #create and locate label of equation 3
         Tk.Label(frame, text = 'f(x) = ').grid(row = 9, column = 0, sticky = Tk.E) 
         self.equation_3 = Tk.Entry(frame)#create entry for equation 3
@@ -95,8 +76,6 @@ class Main_win(object):
         Tk.Label(frame, text = 'Label = ').grid(row = 10, column = 0, sticky = Tk.E)
         self.label_3 = Tk.Entry(frame)#create entry for label equation 3
         self.label_3.grid(row = 10, column = 1) #locate label_3
-        
-
         Tk.Button(frame, text = 'Calculate', command = option.calculate).grid(row = 11, column = 0, columnspan = 2)#create and locate calculate button
         Tk.Button(frame, text = 'Reset', command = option.reset).grid(row = 12, columnspan = 2)#create and locate calculate button
         
@@ -115,8 +94,8 @@ class Option(object):
         self.y1 = None #y1 position
         self.xpress = None #x positon when press
         self.ypress = None #y positon when press
-        self.ploter = main_win.ploter #ploter frame
-        self.fig = main_win.figure #ploter figure
+        self.ploter = main_win.ploter #plotter frame
+        self.fig = main_win.figure #plotter figure
         self.main_win = main_win #main window
         self.line_color_1 = '#123456' #color of equation 1
         self.line_color_2 = '#234567' #color of equation 2
@@ -143,10 +122,8 @@ class Option(object):
             '''zoom'''
             cur_x_limit = self.ploter.get_xlim()
             cur_y_limit = self.ploter.get_ylim()
-
             xdata = event.xdata # get event x location
             ydata = event.ydata # get event y location
-
             if event.button == 'up':
                 # deal with zoom in
                 scale_factor = 1 / base_scale
@@ -157,13 +134,10 @@ class Option(object):
                 # deal with something that should never happen
                 scale_factor = 1
                 print event.button
-
             new_width = (cur_x_limit[1] - cur_x_limit[0]) * scale_factor
             new_height = (cur_y_limit[1] - cur_y_limit[0]) * scale_factor
-
             relx = (cur_x_limit[1] - xdata) / (cur_x_limit[1] - cur_x_limit[0])
             rely = (cur_y_limit[1] - ydata) / (cur_y_limit[1] - cur_y_limit[0])
-
             self.ploter.set_xlim([xdata - new_width * \
                 (1 - relx), xdata + new_width * (relx)])
             self.ploter.set_ylim([ydata - new_height * \
@@ -172,7 +146,6 @@ class Option(object):
 
         fig = self.ploter.get_figure() # get the figure of interest
         fig.canvas.mpl_connect('scroll_event', zoom)
-
         return zoom
 
     def pan_option(self):
@@ -180,8 +153,8 @@ class Option(object):
         def press(event):
             '''when press do'''
             if event.inaxes == self.ploter:
-                self.cur_x_limit = self.ploter.get_xlim()
-                self.cur_y_limit = self.ploter.get_ylim()
+                self.cur_x_limit = self.ploter.get_xlim()#get x axis limit
+                self.cur_y_limit = self.ploter.get_ylim()#get y axis limit
                 self.press = self.x0, self.y0, event.xdata, event.ydata
                 self.x0, self.y0, self.xpress, self.ypress = self.press
 
@@ -199,16 +172,13 @@ class Option(object):
                 self.cur_y_limit -= dy
                 self.ploter.set_xlim(self.cur_x_limit)
                 self.ploter.set_ylim(self.cur_y_limit)
-    
             self.ploter.figure.canvas.draw()
 
         fig = self.ploter.get_figure() # get the figure of interest
-
         # attach the call back
         fig.canvas.mpl_connect('button_press_event', press)
         fig.canvas.mpl_connect('button_release_event', release)
         fig.canvas.mpl_connect('motion_notify_event', move)
-
         #return the function
         return move
 
@@ -229,13 +199,14 @@ class Option(object):
     def color_chooser(self): #function to choose color of graph
         '''function to create color chooser window'''
         window = Tk.Toplevel()
-        window.attributes('-topmost', 1)
+        window.resizable(0, 0) #fix size of window
+        window.attributes('-topmost', 1) # set this window alway on top 
         window.title('Color Chooser')
         color_temp = ['', '', '']
         def color_dialog(line, num, frame):
             '''open color dialog'''
             global temp_1, temp_2, temp_3
-            window.attributes('-topmost', 0)
+            window.attributes('-topmost', 0)#reset to normal can be background
             color_tmp = line
             (rgb, line) = tkColorChooser.askcolor()
             if line == None: #Check for debug when cancle color chooser window
@@ -263,6 +234,7 @@ class Option(object):
         color_dialog(self.line_color_3, 2, color_3_frame)).grid(row = 2, column = 1)
 
         def save():
+            '''Save line color setting'''
             self.line_color_1 = color_temp[0]
             self.line_color_2 = color_temp[1]
             self.line_color_3 = color_temp[2]
@@ -318,7 +290,6 @@ class Option(object):
 
     def xvalue(self):
         '''This function use to set x value'''
-
         window = Tk.Toplevel()
         window.resizable(0, 0) #Set to fig size of window
         window.title('X value setting')
@@ -381,21 +352,23 @@ class Option(object):
         tkMessageBox.showinfo('Message', 'Calculate Complete')#show this message when calculate complete
 
     def reset(self):
+        '''reset ploter frame and equaltion frame'''
         for i in (self.main_win.label_1, self.main_win.label_2,\
             self.main_win.label_3, self.main_win.equation_1,\
             self.main_win.equation_2, self.main_win.equation_3):
-            i.delete(0, Tk.END)
-            self.ploter.cla()
-            self.ploter.grid()
+            i.delete(0, Tk.END)#remove text on equaltion textbox
+        self.ploter.cla()#clear ploter frame
+        self.ploter.grid()#enable grid
 
     def set_ploter(self):
+        '''function use to control x axis, y axis and graph property'''
         window = Tk.Toplevel()
         window.title('Set ploter')
-        window.resizable(0, 0) #Set to fig size of window
-
+        window.resizable(0, 0) #fix size of window
+        window.attributes('-topmost', 1) # set this window alway on top 
         Tk.Checkbutton(window, text = 'Show graph property', variable = self.legend_var, onvalue = 1, offvalue = 0).grid(row = 5)
-        x_limit = self.ploter.get_xlim()
-        y_limit = self.ploter.get_ylim()
+        x_limit = self.ploter.get_xlim()#get minimum and maximum of x axis on ploter
+        y_limit = self.ploter.get_ylim()#get minimum and maximum of y axis on ploter
         Tk.Label(window, text = 'min x axis').grid(row = 1)
         Tk.Label(window, text = 'max x axis').grid(row = 1, column = 1)
         Tk.Label(window, text = 'min y axis').grid(row = 3)
@@ -408,37 +381,42 @@ class Option(object):
         lim_x_2.grid(row = 2, column = 1)
         lim_y_2 = Tk.Entry(window)
         lim_y_2.grid(row = 4, column = 1)
-        lim_x_1.insert(0, x_limit[0])
-        lim_y_1.insert(0, y_limit[0])
-        lim_x_2.insert(0, x_limit[1])
-        lim_y_2.insert(0, y_limit[1])
+        lim_x_1.insert(0, x_limit[0])#insert minimum of x axis on textbox
+        lim_y_1.insert(0, y_limit[0])#insert minimum of y axis on textbox
+        lim_x_2.insert(0, x_limit[1])#insert maximum of x axis on textbox
+        lim_y_2.insert(0, y_limit[1])#insert maximum of x axis on textbox
 
         def save():
+            '''function use to save values from your setting and check some error'''
             if  self.legend_var.get() == 1:
-                self.ploter.legend()
+                self.ploter.legend()#enable graph property
             else:
-                self.ploter.legend().remove()
-
+                if self.ploter.legend() != None:
+                    self.ploter.legend().remove()#disable graph property
             def set_lim():
-                if lim_y_1 == '' or lim_x_1 == '' or lim_x_2 == '' or lim_y_2 == '':
-                    tkMessageBox.showerror('Error', 'Some entry are blank')
+                '''function to set limit of x and y axis'''
+                if lim_y_1 == '' or lim_x_1 == '' or lim_x_2 == '' or lim_y_2 == '' or lim_x_1.get() >= lim_x_2.get() or lim_y_1.get() >= lim_y_2.get():
+                    tkMessageBox.showerror('Error', 'Please check your setting')
                 else:
-                    self.ploter.set_xlim([float(lim_x_1.get()), float(lim_x_2.get())])
-                    self.ploter.set_ylim([float(lim_y_1.get()), float(lim_y_2.get())])
-                    self.ploter.figure.canvas.draw() 
+                    self.ploter.set_xlim([float(lim_x_1.get()), float(lim_x_2.get())])#set x axis limit
+                    self.ploter.set_ylim([float(lim_y_1.get()), float(lim_y_2.get())])#set y axis limit
+                    self.ploter.figure.canvas.draw()#update ploter frame
+                    self.window_exit(window)#quit ploter setting window                  
             set_lim()
-
+            
         Tk.Button(window, text = 'Ok' , command = save).grid(row = 6, column = 0)
         Tk.Button(window, text = 'cancle', command = lambda :self.window_exit(window)).grid(row = 6, column = 1)
 
 #Menu bar
 class Menu(object):
+    '''Class to create menubar'''
     def __init__(self, main_win, option):
         self.main_win = main_win.main_win
         self.option = option
         self.menu_bar()
     
     def menu_bar(self):
+        '''Menubar creater function'''
         menubar = Tk.Menu(self.main_win)
         # create a pulldown menu, and add it to the menu bar
         filemenu = Tk.Menu(menubar, tearoff=0)
@@ -446,19 +424,17 @@ class Menu(object):
         filemenu.add_separator()
         filemenu.add_command(label="Exit", command = lambda : self.option.window_exit(self.main_win))
         menubar.add_cascade(label="File", menu=filemenu)
-
-        # create more pulldown menus
+        # create more pull down menus
         editmenu = Tk.Menu(menubar, tearoff=0)
         editmenu.add_command(label="Color", command = self.option.color_chooser)
         editmenu.add_command(label="Style", command = self.option.style_chooser)
         editmenu.add_command(label="X value", command = self.option.xvalue)
         editmenu.add_command(label="Ploter", command = self.option.set_ploter)
         menubar.add_cascade(label="Edit", menu=editmenu)
-
         helpmenu = Tk.Menu(menubar, tearoff=0)
-        helpmenu.add_command(label = "About")
+        helpmenu.add_command(label = "How to use", command = lambda : webbrowser.open_new\
+            (r"https://github.com/kanathips/math_ploter/blob/master/How_to_use.pdf?raw=true") )
         menubar.add_cascade(label = "Help", menu=helpmenu)
-
         # display the menu
         self.main_win.config(menu = menubar)
 
